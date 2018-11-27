@@ -1,0 +1,19 @@
+{
+    "name": "magicsoft/yii2-magicsoft-base",
+    "description": "Magicsoft Base",
+    "type": "library",
+    "keywords": ["yii2","library"],
+    "homepage": "https://github.com/aramirezarg/yii2-magicsoft-base",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Alfredo Ramirez",
+            "email": "alfredrz2012@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "magicsoft\\base\\": "src"
+        }
+    }
+}
