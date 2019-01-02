@@ -30,8 +30,12 @@ return [
     
     'Reload this window' => 'Recargar pantalla',
     'This action will return your data to the latest update. <br> <br> <strong> Recent changes will be lost.</strong>' => 
-    'Esta acción retornará sus datos a la última actualizacion. <br> <br> <strong> Los cambios recientes se perderán.</strong>',
+    'Esta acción retornará sus datos a la última actualización. <br> <br> <strong> Los cambios recientes se perderán.</strong>',
 
     'Ok' => 'Aceptar',
-    'Cancel' => 'Cancelar'
+    'Cancel' => 'Cancelar',
+
+    'Delete record' => 'Eliminar registro?',
+    'Are you sure to delete this record?' => 'Está seguro de eliminar este registro?',
+    'Application not completed' => 'Acción no completada'
 ];
