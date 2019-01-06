@@ -20,6 +20,14 @@ class MagicsoftAsset extends AssetBundle
     use TranslationTrait;
     public $sourcePath = '@vendor/magicsoft/yii2-magicsoft-base/src/assets';
 
+    public $js = [
+		'js/magic.helper.js',
+		'js/magic.message.js',
+		'js/spin.js',
+		'js/jquery.form.js',
+		'js/beep.js'
+    ];
+
     public $css = [
         'css/magicsoft.css',
     ];
