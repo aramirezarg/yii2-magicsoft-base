@@ -25,14 +25,12 @@ class MagicMessage{
         this.setConfig();
 
         $( "body" ).append("\
-            <div class = 'modal bootstrap-dialog type-" + this.class + this.name + " size-normal' data-backdrop='static' style='display: none;'>\
+            <div class = 'modal type-" + this.class + this.name + "' data-backdrop='static' style='display: none;'>\
                 <div class='modal-dialog'>\
-                    <div class='modal-content' style = 'border-radius: 4px'>\
-                        <div>" +
-                            this.htmlHead() +
-                            this.htmlBody() +
-                            this.htmlFooter() + "\
-                        </div>\
+                    <div class='modal-content'>" +
+                        this.htmlHead() +
+                        this.htmlBody() +
+                        this.htmlFooter() + "\
                    </div>\
                 </div>\
             </div>"
@@ -56,18 +54,21 @@ class MagicMessage{
 
     htmlHead(){
         return "\
-            <div class='msbox-header header-form modal-header' style='background-color: " + this.color + ";'>\
-                <h3 class='msbox-title'>\
-                    <i class='glyphicon " + this.icon + "' style='font-size: x-large; text-decoration: none; padding-right: 5px;'></i>\
-                    <strong style='font-size: x-large; text-decoration: none; color:black'>" + this.title + "</strong>\
-                </h3>\
-            </div>\
+            <div class='modal-header' style='background-color: " + this.color + "; padding-top: 10px;'> \
+                <div class='col-12'> \
+                    <div class='row'> \
+                        <div class='col-12' style='text-align: left; padding-left: 0'> \
+                            <a class='title card-title' style='font-size: 22px; color: black'><strong>" + this.title + "</strong></a> \
+                        </div> \
+                    </div> \
+                </div> \
+            </div> \
         ";
     }
 
     htmlBody(){
         return "\
-            <div class='msbox-body'>\
+            <div class='modal-body'>\
                 <div class = 'content-message' style='font-size: 16px'/>\
             </div>\
         ";
@@ -75,8 +76,8 @@ class MagicMessage{
 
     htmlFooter(){
         return "\
-            <div class='msbox-footer footer-form' style='background-color: whitesmoke;'>\
-                <div magic-message = '" + this.name  + "' class='msbox-tools pull-right float-right'>" +
+            <div class='modal-footer' style='background-color: whitesmoke;'>\
+                <div magic-message = '" + this.name  + "' class='pull-right float-right'>" +
                     this.okButton() + this.cancelButton() + "\
                 </div>\
             </div>\
