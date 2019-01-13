@@ -4,12 +4,16 @@ namespace magicsoft\base;
 /**
  * MagicSelect Module
  */
-class MagicSoftModule extends \yii\base\Module
+class MagicsoftModule extends \yii\base\Module
 {
     /**
      * @inheritdoc
      */
     public $controllerNamespace = 'magicsoft\base\controllers';
+    
+    public $modelsOptions;
+
+    public $encryptOptions = [];
 
     /**
      * @inheritdoc

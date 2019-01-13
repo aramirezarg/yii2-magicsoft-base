@@ -8,6 +8,8 @@
 namespace magicsoft\base\controllers;
 
 use magicsoft\base\MagicSelectHelper;
+use magicsoft\base\MagicsoftModule;
+use magicsoft\base\TranslationTrait;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
@@ -16,9 +18,18 @@ use yii\web\NotFoundHttpException;
 
 trait MagicController
 {
+    use TranslationTrait;
+
+    public function init()
+    {
+        $this->initI18N(MagicsoftModule::getSorceLangage(), 'magicbase');
+        parent::init();
+    }
+
     public $baseView = '';
 
-    protected function getErrors($_errors){
+    protected function getErrors($_errors)
+    {
         $title = Yii::t('yii', 'Please fix the following errors:');
         $errors = '';
         foreach ($_errors as $row) {
@@ -34,11 +45,13 @@ trait MagicController
      * @throws \yii\base\InvalidConfigException
      * @return boolean
      */
-    protected function getParam($param){
+    protected function getParam($param)
+    {
         return ArrayHelper::getValue(\Yii::$app->request->getQueryParams(), $param, ArrayHelper::getValue(\Yii::$app->request->getBodyParams(), $param, null));
     }
 
-    protected function getAction(){
+    protected function getAction()
+    {
         return Yii::$app->controller->action->id;
     }
 
@@ -90,7 +103,8 @@ trait MagicController
         $load = $mode[0] ? 'loadAll' : 'load';
         $save = $mode[0] ? 'saveAll' : 'save';
 
-        if( $model->{$load}(Yii::$app->request->post())) {
+        if( $model->{$load}(Yii::$app->request->post()))
+        {
             $thisTrans = Yii::$app->getDb()->beginTransaction();
 
             if( $model->{$save}($save == 'saveAll' ? $this->getOnlyRelationsUpdate($model, $mode[1]) : true))
@@ -169,7 +183,8 @@ trait MagicController
      * @param $relationsUpdated
      * @return array
      */
-    private function getOnlyRelationsUpdate($model, $relationsUpdated){
+    private function getOnlyRelationsUpdate($model, $relationsUpdated)
+    {
         $allRelations =  $model->getRelationData();
         return array_diff(array_keys($allRelations), $relationsUpdated);
     }
@@ -186,6 +201,9 @@ trait MagicController
         if ( $modal && Yii::$app->request->isAjax ) {
             return $this->renderAjax($view, $params);
         } else {
+            if(!MagicSelectHelper::isFreeAjax(Yii::$app->controller->id, $this->action->id)){
+                throw new NotFoundHttpException("The request page does no exist.");
+            }
             return $this->render($view, $params);
         }
     }
@@ -198,7 +216,8 @@ trait MagicController
      * @throws NotFoundHttpException
      * @throws ForbiddenHttpException
      */
-    protected function responseError($model, $params = [], $data = null){
+    protected function responseError($model, $params = [], $data = null)
+    {
         $target = $this->getParam('target');
         if ( $target !== '_blank' && Yii::$app->request->isAjax ) {
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -208,19 +227,20 @@ trait MagicController
                 'data'  => (( $data && is_array( $data ) ) ? $data : $this->getErrors( $model ? $model->getErrors() : null ) )
             ], $params );
         }elseif ($target !== '_blank'){
-            throw new ForbiddenHttpException(ArrayHelper::getValue($data, 'data', 'The operation was not completed.'));
+            throw new ForbiddenHttpException(ArrayHelper::getValue($data, 'data', \Yii::t('magicbase', 'The operation was not completed')));
         }
     }
 
-    protected function responseSuccess($params = []){
+    protected function responseSuccess($params = [])
+    {
         $target = $this->getParam('target');
         if ( $target !== '_blank' && Yii::$app->request->isAjax ) {
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             return array_merge([
                 'error' => false,
                 'data'  => [
-                    'title' => 'Completed',
-                    'data'  => 'The operation was completed successfully.'
+                    'title' => \Yii::t('magicbase', 'Completed'),
+                    'data' => \Yii::t('magicbase', 'The operation was completed successfully'),
                 ]
             ], $params);
         }elseif ($target !== '_blank'){
@@ -228,7 +248,8 @@ trait MagicController
         }
     }
 
-    public function requestIsAjax(){
+    public function requestIsAjax()
+    {
         return Yii::$app->request->isAjax;
     }
 
@@ -236,8 +257,8 @@ trait MagicController
     {
         \Yii::$app->getSession()->setFlash('success', [
             'type' => 'success',
-            'message' => ($msg)? $msg : 'Completed',
-            'title' => ($title)? $title : 'The operation was not completed.',
+            'message' => ($msg)? $msg : \Yii::t('magicbase', 'Completed'),
+            'title' => ($title)? $title : \Yii::t('magicbase', 'The operation was not completed'),
         ]);
     }
 
@@ -245,8 +266,8 @@ trait MagicController
     {
         \Yii::$app->getSession()->setFlash('success', [
             'type' => 'danger',
-            'message' => ($msg)? $msg : 'Not completed',
-            'title' => ($title)? $title : 'The operation was not completed.',
+            'message' => ($msg)? $msg : \Yii::t('magicbase', 'Not completed'),
+            'title' => ($title)? $title : \Yii::t('magicbase', 'The operation was not completed'),
         ]);
     }
 }

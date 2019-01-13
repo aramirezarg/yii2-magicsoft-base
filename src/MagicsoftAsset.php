@@ -29,17 +29,13 @@ class MagicsoftAsset extends AssetBundle
     ];
 
     public $css = [
-        'css/magicsoft.css',
     ];
 
     public $depends = [
-        'yii\web\JqueryAsset'
     ];
 
     public function init()
     {
-        $this->initI18N(MagicSoftModule::getSorceLangage(), 'magicmodal');
-        $this->initJsLanguage();
         parent::init();
     }
 

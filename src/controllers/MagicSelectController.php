@@ -11,11 +11,22 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
- * MagicSelectController implements methods for the selector.
+ * MagicSelectController implements methods for the select.
  */
 class MagicSelectController extends Controller
 {
-    use TranslationTrait;
+    /**
+     * @var array
+     * @return bool
+     * @throws ForbiddenHttpException
+     */
+    public function beforeAction($action){
+        if(Yii::$app->user->isGuest) {
+            $this->redirect(Yii::$app->getHomeUrl());
+        } else {
+            return true;
+        }
+    }
 
     /**
      * @param $class
@@ -48,7 +59,7 @@ class MagicSelectController extends Controller
 
         $join = strtolower($join);
 
-        if(!is_null($q)) {
+        if(!is_null($q)){
             if ($own_function_search) {
                 $resultModel = $class::{$own_function_search}($q);
             } else {
@@ -59,7 +70,11 @@ class MagicSelectController extends Controller
                 $resultModel->where(['like', ($join ? $join . '.' : '') . ' concat(' . $search_data . ')', $q]);
             }
         }else{
-            $resultModel = $class::find();
+            if ($own_function_search) {
+                $resultModel = $class::{$own_function_search}($q);
+            } else {
+                $resultModel = $class::find();
+            }
         }
 
         if ($parent) $resultModel->andWhere([\yii\helpers\BaseInflector::underscore($parent . '_id') => $parent_value]);

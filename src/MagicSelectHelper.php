@@ -13,32 +13,81 @@ use yii\helpers\ArrayHelper;
 
 class MagicSelectHelper
 {
-    public static $configurationsModels = [
+    public static $modelsDefaultOptions = [
         'default' => [
-            'icon' => 'fa fa-list-ul',
-        ],
+            'icon' => 'fa fa-list',
+            'modal' => [true]
+        ]
     ];
 
     /**
      * @return array
      */
-    public static function mergeConfiguration(){
-        return array_merge(self::$configurationsModels, ArrayHelper::getValue(Yii::$app->params, 'configForMagicSelect', []));
+    public static function mergeConfiguration()
+    {
+        return array_merge(self::$modelsDefaultOptions, Yii::$app->getModule('magicsoft')->modelsOptions);
     }
 
     /**
      * @param null $model
      * @return mixed
      */
-    public static function getIcon($model = null){
+    public static function getIcon($model = null)
+    {
         return ArrayHelper::getValue(self::getModel($model), 'icon', self::getDefaultModel()['icon']);
     }
 
+    
+    public static function getParent($model = null)
+    {
+        $group = ArrayHelper::getValue(self::getModel($model), 'group', self::getDefaultModel()['group']);
+        
+        return ArrayHelper::getValue($group, 'parent', null);
+    }
+
+    public static function getShield($model = null)
+    {
+        $group = ArrayHelper::getValue(self::getModel($model), 'group', self::getDefaultModel()['group']);
+
+        return ArrayHelper::getValue($group, 'shield', null);
+    }
+
+    public static function getSingularTitle($model = null)
+    {
+        $array_title = ArrayHelper::getValue(self::getModel($model), 'title', []);
+        return ArrayHelper::getValue($array_title, 'singular', is_array($array_title) ? Yii::$app->controller->id : $array_title);
+    }
+
+    public static function getPluralTitle($model = null)
+    {
+        $array_title = ArrayHelper::getValue(self::getModel($model), 'title', []);
+        return ArrayHelper::getValue($array_title, 'plural', is_array($array_title) ? Yii::$app->controller->id : $array_title);
+    }
+
+    public static function isAjax($model = null)
+    {
+        $ajax = ArrayHelper::getValue(self::getModel($model), 'modal', []);
+
+        return ArrayHelper::getValue($ajax, 0, false);
+    }
+
+    public static function isFreeAjax($model = null, $action)
+    {
+        $ajax = ArrayHelper::getValue(self::getModel($model), 'modal', []);
+
+        if (self::isAjax($model)) {
+            return in_array($action, ArrayHelper::getValue($ajax, 'free', []));
+        }
+        
+        return true;
+    }
+    
     /**
      * @param null $model
      * @return mixed
      */
-    public static function getModel($model = null){
+    public static function getModel($model = null)
+    {
         $model = $model ? $model : Yii::$app->controller->id;
         return ArrayHelper::getValue(self::mergeConfiguration(), $model, self::getDefaultModel());
     }
@@ -46,11 +95,13 @@ class MagicSelectHelper
     /**
      * @return mixed
      */
-    public static function getDefaultModel(){
+    public static function getDefaultModel()
+    {
         return self::mergeConfiguration()['default'];
     }
 
-    public static function getDataReturnType($data){
+    public static function getDataReturnType($data)
+    {
         if(is_array($array = explode(':', $data))){
             return current($array);
         }else{
@@ -58,7 +109,8 @@ class MagicSelectHelper
         }
     }
 
-    public static function getDataReturnQuery($data_return_type, $data_return){
+    public static function getDataReturnQuery($data_return_type, $data_return)
+    {
         if(is_array($array = explode(':', $data_return))){
             return ($data_return_type == 'field' ? 'id,' : '') . end($array) . ($data_return_type == 'field' ? ' as text' : '');
         }else{
@@ -66,7 +118,8 @@ class MagicSelectHelper
         }
     }
 
-    public static function getDataSelect($resultModel, $join, $dataReturn){
+    public static function getDataSelect($resultModel, $join, $dataReturn)
+    {
         $data_return_type = self::getDataReturnType(MagicCrypto::decrypt($dataReturn));
         $column_description = self::getDataReturnQuery($data_return_type, MagicCrypto::decrypt($dataReturn));
 
@@ -93,7 +146,8 @@ class MagicSelectHelper
         return isset($out) ? $out : ['results' => ['id' => null, 'text' => $data_return_type]];
     }
 
-    public static function getDataDescription($model, $dataReturn){
+    public static function getDataDescription($model, $dataReturn)
+    {
         $data_return_type = self::getDataReturnType(MagicCrypto::decrypt($dataReturn));
         $column_description = self::getDataReturnQuery($data_return_type, MagicCrypto::decrypt($dataReturn));
 

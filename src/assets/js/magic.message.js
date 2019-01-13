@@ -28,7 +28,7 @@ class MagicMessage{
             <div class = 'modal bootstrap-dialog type-" + this.class + this.name + " size-normal' data-backdrop='static' style='display: none;'>\
                 <div class='modal-dialog'>\
                     <div class='modal-content' style = 'border-radius: 4px'>\
-                        <div class=''>" +
+                        <div>" +
                             this.htmlHead() +
                             this.htmlBody() +
                             this.htmlFooter() + "\
@@ -36,16 +36,17 @@ class MagicMessage{
                    </div>\
                 </div>\
             </div>"
-    ).addClass('modal-open');
+        ).addClass('modal-open');
+
         $('.' + this.name).fadeIn(200).find('.content-message').html(this.message);
     }
 
     setConfig() {
         var config = {
-            confirm: {class: "warning ", color: "orange", icon: "glyphicon-question-sign"},
-            alert: {class: "info ", color: "#00CED1", icon: "glyphicon-info-sign"},
-            error: {class: "warning ", color: "#ff4f3a", icon: "glyphicon-warning-sign"},
-            default: {class: "default ", color: "#00CED1", icon: "glyphicon-comment"}
+            confirm: {class: "warning ", color: "orange", icon: "glyphicon-question-sign ti-help-alt"},
+            alert: {class: "info ", color: "#00CED1", icon: "glyphicon-info-sign ti-info-alt"},
+            error: {class: "warning ", color: "#ff4f3a", icon: "glyphicon-warning-sign ti-alert"},
+            default: {class: "default ", color: "#00CED1", icon: "glyphicon-comment ti-alert"}
         };
 
         this.class = config[this.type]['class'];
@@ -74,8 +75,8 @@ class MagicMessage{
 
     htmlFooter(){
         return "\
-            <div class='msbox-footer footer-form control_modal' style='background-color: whitesmoke; padding: 3px;'>\
-                <div magic-message = '" + this.name  + "' class='msbox-tools pull-right'>" +
+            <div class='msbox-footer footer-form' style='background-color: whitesmoke;'>\
+                <div magic-message = '" + this.name  + "' class='msbox-tools pull-right float-right'>" +
                     this.okButton() + this.cancelButton() + "\
                 </div>\
             </div>\
