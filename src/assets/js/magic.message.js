@@ -28,9 +28,9 @@ class MagicMessage{
             <div class = 'modal type-" + this.class + this.name + "' data-backdrop='static' style='display: none;'>\
                 <div class='modal-dialog'>\
                     <div class='modal-content'>" +
-                        this.htmlHead() +
-                        this.htmlBody() +
-                        this.htmlFooter() + "\
+            this.htmlHead() +
+            this.htmlBody() +
+            this.htmlFooter() + "\
                    </div>\
                 </div>\
             </div>"
@@ -55,12 +55,8 @@ class MagicMessage{
     htmlHead(){
         return "\
             <div class='modal-header' style='background-color: " + this.color + "; padding-top: 10px;'> \
-                <div class='col-12'> \
-                    <div class='row'> \
-                        <div class='col-12' style='text-align: left; padding-left: 0'> \
-                            <a class='title card-title' style='font-size: 22px; color: black'><strong>" + this.title + "</strong></a> \
-                        </div> \
-                    </div> \
+                <div style='text-align: left; padding-left: 0'> \
+                    <a class='title card-title' style='font-size: 22px; color: black'><strong>" + this.title + "</strong></a> \
                 </div> \
             </div> \
         ";
@@ -78,7 +74,7 @@ class MagicMessage{
         return "\
             <div class='modal-footer' style='background-color: whitesmoke;'>\
                 <div magic-message = '" + this.name  + "' class='pull-right float-right'>" +
-                    this.okButton() + this.cancelButton() + "\
+            this.okButton() + this.cancelButton() + "\
                 </div>\
             </div>\
         ";
