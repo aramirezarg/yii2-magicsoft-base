@@ -156,7 +156,7 @@ class MagicSelectHelper
             foreach ($columns = explode(',', $column_description) as $column){
                 $data_return .= $model->{$column} . ' | '  ;
             }
-            return  substr($data_return, 0, strlen($data_return) - 2);
+            return substr($data_return, 0, strlen($data_return) - 2);
         }
         return $model->{$column_description};
     }

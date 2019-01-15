@@ -11,7 +11,7 @@ class MagicsoftModule extends \yii\base\Module
      */
     public $controllerNamespace = 'magicsoft\base\controllers';
     
-    public $modelsOptions;
+    public $modelsOptions = [];
 
     public $encryptOptions = [];
 

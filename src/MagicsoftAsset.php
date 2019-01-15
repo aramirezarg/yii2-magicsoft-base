@@ -29,6 +29,7 @@ class MagicsoftAsset extends AssetBundle
     ];
 
     public $css = [
+        'css/spin.css'
     ];
 
     public $depends = [

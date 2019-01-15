@@ -36,7 +36,8 @@ class MagicMessage{
             </div>"
         ).addClass('modal-open');
 
-        $('.' + this.name).fadeIn(200).find('.content-message').html(this.message);
+        $('.' + this.name).find('.content-message').html(this.message);
+        $('.' + this.name).fadeIn(300);
     }
 
     setConfig() {
@@ -98,6 +99,18 @@ class MagicMessage{
 
     close() {
         Modals.pop();
+        
+        var divModal = $(document).find('.' + this.name);
+        
+        setTimeout(function(){
+    		divModal.fadeOut(200);
+    		setTimeout(function(){
+    			divModal.remove();
+    			//$('div#' + self.id + '-backdrop').remove();
+    			if(Modals.length === 0) $( 'body' ).removeClass('modal-open');
+    		}, 0)
+    	}, 200);
+        
 
         if(Modals.length === 0) $('body').removeClass('modal-open');
 
