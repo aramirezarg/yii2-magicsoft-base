@@ -54,7 +54,6 @@ class MagicSelectController extends Controller
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         $class = MagicCrypto::decrypt($class);
-        $search_data = MagicCrypto::decrypt($search_data);
         $own_function_search = MagicCrypto::decrypt($own_function_search);
 
         $join = strtolower($join);
@@ -67,7 +66,7 @@ class MagicSelectController extends Controller
 
                 if ($join) $resultModel->joinWith($join);
 
-                $resultModel->where(['like', ($join ? $join . '.' : '') . ' concat(' . $search_data . ')', $q]);
+                $resultModel->where(['like', ($join ? $join . '.' : '') . ' concat(' . MagicCrypto::decrypt($search_data) . ')', $q]);
             }
         }else{
             if ($own_function_search) {
@@ -77,7 +76,7 @@ class MagicSelectController extends Controller
             }
         }
 
-        if ($parent) $resultModel->andWhere([\yii\helpers\BaseInflector::underscore($parent . '_id') => $parent_value]);
+        if ($parent) $resultModel->andWhere([MagicCrypto::decrypt($parent) => $parent_value]);
 
         $resultModel->limit(20);
 
