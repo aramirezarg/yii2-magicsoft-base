@@ -38,6 +38,8 @@ class MagicMessage{
 
         $('.' + this.name).find('.content-message').html(this.message);
         $('.' + this.name).fadeIn(300);
+
+        setTimeout(this.addListener(), 0);
     }
 
     setConfig() {
@@ -55,11 +57,11 @@ class MagicMessage{
 
     htmlHead(){
         return "\
-            <div class='modal-header' style='background-color: " + this.color + "; padding-top: 10px;'> \
-                <div style='text-align: left; padding-left: 0'> \
-                    <a class='title card-title' style='font-size: 22px; color: black'><strong>" + this.title + "</strong></a> \
-                </div> \
-            </div> \
+            <div class='modal-header' style='background-color: " + this.color + "; padding-top: 10px;'>\
+                <div style='text-align: left; padding-left: 0'>\
+                    <a class='title card-title' style='font-size: 22px; color: black'><strong>" + this.title + "</strong></a>\
+                </div>\
+            </div>\
         ";
     }
 
@@ -122,68 +124,122 @@ class MagicMessage{
         for( var i=0; i < 20; i++ ) name += textBase.charAt(Math.floor(Math.random() * textBase.length));
         return 'MSM_' + name;
     }
+
+    addListener(){
+        let self = this;
+
+        document.querySelector('.magic-message-run').addEventListener('click', function(event){
+            self.runOkFunction();
+            self.close();
+        })
+
+        document.querySelector('.magic-message-close').addEventListener('click', function(event){
+            self.close();
+        })
+    }
 };
 
-$(document).on('click', '.magic-message-run', function (e) {
-    $(this).blur();
-    e.preventDefault();
-    magicMessage = $(this).parent().parent().attr('magic-message');
-
-    window[magicMessage].runOkFunction();
-    window[magicMessage].close();
-});
-
-$(document).on('click', '.magic-message-close', function (e) {
-    $(this).blur();
-    e.preventDefault();
-    magicMessage = $(this).parent().parent().attr('magic-message');
-
-    window[magicMessage].runCancelFunction();
-    window[magicMessage].close();
-});
-
-MagicDelete = function(e){
+MagicMessageDelete = function(e){
     e.stopPropagation();
     e.preventDefault();
     $(this).blur();
 
+    var target = '';
     var url = $(this).attr('href');
+    var title = MagicsoftLanguage('Delete record');
+    var message = MagicsoftLanguage('Are you sure to delete this record?');
+
+    ConfirmMagicMessage(target, url, title, message);
+};
+
+var items = document.getElementsByClassName('magic-delete-row');
+for (var i = 0; i < items.length; i++) {
+    items[i].addEventListener('click', MagicMessageDelete);
+};
+
+MagicMessageConfirm = function(e){
+    e.stopPropagation();
+    e.preventDefault();
+    $(this).blur();
+
+    var target = $(this).attr('target');
+    var url = $(this).attr('href') + ((target !== null && target !== undefined) ? '&target=' + target: '');
+    var title = $(this).attr('confirm-title');
+    var message = $(this).attr('confirm-text');
+
+    ConfirmMagicMessage(target, url, title, message);
+};
+var items = document.getElementsByClassName('confirm-message');
+for (var i = 0; i < items.length; i++) {
+    items[i].addEventListener('click', MagicMessageConfirm);
+};
+
+
+function ConfirmMagicMessage(target, url, title, message){
     new MagicMessage(
         'confirm',
-        MagicsoftLanguage('Delete record'),
-        'Are you sure to delete this record?',
-        function(){
-            $.getJSON( url ).done(
-                function( data, textStatus, jqXHR ) {
-                    if(data.showMessage === false){
-                        location.reload();
-                    }else{
-                        new MagicMessage(
-                            'success',
-                            data.data.title,
-                            data.data.data,
-                            '',
-                            function(){loading(true); location.reload();}
-                        );
+        title,
+        message,
+        function() {
+            if(target === '_blank') {
+                openInNewTab(url);
+            }else{
+                loading(true);
+                $.getJSON(url).done(
+                    function (data, textStatus, jqXHR) {
+                        loading(false);
+                        if (data.error) {
+                            new MagicMessage(
+                                'success',
+                                data.data.title,
+                                data.data.data,
+                                '',
+                                function () {
+                                    loading(true);
+                                    location.reload();
+                                }
+                            );
+                        } else {
+                            if (data.redirect) location.reload();
+                        }
                     }
-                }
-            ).fail(
-                function( jqXHR, textStatus, errorThrown ) {
-                    loading(false);
-                    if (jqXHR.status !== 302) {
-                        new MagicMessage(
-                            'error',
-                            MagicsoftLanguage('Application not completed'),
-                            "<strong>Error " + jqXHR.status + "</strong>: " + jqXHR.responseText
-                        );
+                ).fail(
+                    function( jqXHR, textStatus, errorThrown ) {
+                        loading(false);
+                        if (jqXHR.status !== 302) {
+                            new MagicMessage(
+                                'error',
+                                MagicsoftLanguage('Application not completed'),
+                                "<strong>Error " + jqXHR.status + "</strong>: " + jqXHR.responseText
+                            );
+                        }
                     }
-                }
-            );
+                );
+            }
+        }
+    );
+}
+
+var items = document.getElementsByClassName('magic-message');
+for (var i = 0; i < items.length; i++) {
+    items[i].addEventListener('click', MagicMessageConfirm);
+};
+
+MagicMessageDefault = function(e){
+    e.stopPropagation();
+    e.preventDefault();
+    $(this).blur();
+
+    var title = $(this).attr('message-title');
+    var message = $(this).attr('message-text');
+    var okFunction = $(this).attr('okFunction');
+
+    new MagicMessage(
+        'confirm',
+        title,
+        message,
+        function() {
+            setTimeout(okFunction,0);
         }
     );
 };
-
-var items = document.getElementsByClassName('.magic-delete-row');
-for (var i = 0; i < items.length; i++) {
-    items[i].addEventListener('click', MagicDelete);
-}

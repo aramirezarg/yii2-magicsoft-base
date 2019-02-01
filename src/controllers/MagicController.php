@@ -114,7 +114,7 @@ trait MagicController
                     if(!$function['model']->{$function['function']}($params)){
                         if($function['use_transaction']){
                             $thisTrans->rollBack();
-                            return $this->responseError($function['model']);
+                            return $this->responseErrors($function['model']);
                         }
                     }
                 }
@@ -141,7 +141,7 @@ trait MagicController
                                 'close_parent' => ArrayHelper::getValue($returnUrl, 'close_parent', true),
                                 'call_back_function' => ArrayHelper::getValue($returnUrl, 'call_back_function', '')
                             ];
-                            return $this->responseSuccess($setUrl);
+                            return $this->responseSuccesss($setUrl);
                         }
 
                         $magic_response = [];
@@ -153,7 +153,7 @@ trait MagicController
                             ];
                         }
 
-                        return $this->responseSuccess($magic_response);
+                        return $this->responseSuccesss($magic_response);
                     }else{
                         return $this->redirect([ $this->baseView. 'view',
                             'id' => $model->id
@@ -162,7 +162,7 @@ trait MagicController
                 }
             }else{
                 if( $modal ){
-                    return $this->responseError($model);
+                    return $this->responseErrors($model);
                 }else{
                     return $this->render(
                         ($view ? $this->baseView . $view : (($this->getAction() == 'create') ? $this->baseView . 'create' : $this->baseView .'update')), [
@@ -216,7 +216,7 @@ trait MagicController
      * @throws NotFoundHttpException
      * @throws ForbiddenHttpException
      */
-    protected function responseError($model, $params = [], $data = null)
+    protected function responseErrors($model, $params = [], $data = null)
     {
         $target = $this->getParam('target');
         if ( $target !== '_blank' && Yii::$app->request->isAjax ) {
@@ -231,7 +231,56 @@ trait MagicController
         }
     }
 
-    protected function responseSuccess($params = [])
+    /**
+     * @param $model
+     * @param array $params
+     * @param null $data
+     * @return array
+     * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException
+     */
+    protected function responseError($onFlash = false, $title = 'Operation not completed', $message = 'The action not completed')
+    {
+        if (Yii::$app->request->isAjax && !$onFlash) {
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return [
+                'type' => 'warning',
+                'error' => true,
+                'data' =>  [
+                    'title' => $title,
+                    'message' => $message
+                ]
+            ];
+        }else{
+            Yii::$app->session->setFlash('error', [
+                'type' => 'warning',
+                'title' => $title,
+                'message' => $message
+            ]);
+        }
+    }
+
+    protected function responseSuccess($onFlash = false, $title = 'Operation completed', $message = 'The action has successfull')
+    {
+        if (Yii::$app->request->isAjax && !$onFlash) {
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return [
+                'error' => true,
+                'data' =>  [
+                    'title' => $title,
+                    'message' => $message
+                ]
+            ];
+        }else{
+            Yii::$app->session->setFlash('success', [
+                'type' => 'success',
+                'title' => $title,
+                'message' => $message
+            ]);
+        }
+    }
+
+    protected function responseSuccesss($params = [])
     {
         $target = $this->getParam('target');
         if ( $target !== '_blank' && Yii::$app->request->isAjax ) {
