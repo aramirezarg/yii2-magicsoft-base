@@ -12,6 +12,7 @@ use magicsoft\base\MagicsoftModule;
 use magicsoft\base\TranslationTrait;
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
@@ -19,6 +20,9 @@ use yii\web\NotFoundHttpException;
 trait MagicController
 {
     use TranslationTrait;
+
+    public $errorSummaryCssClass = 'error-summary';
+    public $encodeErrorSummary = true;
 
     public function init()
     {
@@ -258,6 +262,21 @@ trait MagicController
                 'message' => $message
             ]);
         }
+    }
+
+    protected function setFlashErrosFromModel($model){
+        Yii::$app->session->setFlash('error', [
+            'type' => 'warning',
+            'title' => Yii::t('yii', 'Please fix the following errors:'),
+            'message' => $this->errorSummary($model)
+        ]);
+    }
+
+    protected function errorSummary($models, $options = [])
+    {
+        Html::addCssClass($options, $this->errorSummaryCssClass);
+        $options['encode'] = $this->encodeErrorSummary;
+        return Html::errorSummary($models, $options);
     }
 
     protected function responseSuccess($onFlash = false, $title = 'Operation completed', $message = 'The action has successfull')
