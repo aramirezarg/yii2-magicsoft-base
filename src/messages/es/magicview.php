@@ -18,7 +18,7 @@
  */
 
 return [
-    'DETAIL VIEW' => 'CREAR',
+    'DETAIL VIEW' => 'VSTA DETALLADA',
     'CREATE' => 'CREAR',
     'UPDATE' => 'ACTUALIZAR',
     'GENERAL VIEW' => 'VISTA GENERAL',

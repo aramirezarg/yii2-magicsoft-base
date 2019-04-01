@@ -16,7 +16,8 @@ class MagicSelectHelper
     public static $modelsDefaultOptions = [
         'default' => [
             'icon' => 'fa fa-list',
-            'modal' => [true]
+            'modal' => [true],
+            'group' => 'system'
         ]
     ];
 
@@ -37,12 +38,9 @@ class MagicSelectHelper
         return ArrayHelper::getValue(self::getModel($model), 'icon', self::getDefaultModel()['icon']);
     }
 
-    
     public static function getParent($model = null)
     {
-        $group = ArrayHelper::getValue(self::getModel($model), 'group', self::getDefaultModel()['group']);
-        
-        return ArrayHelper::getValue($group, 'parent', null);
+        return ArrayHelper::getValue(self::getModel($model), 'group',  []);
     }
 
     public static function getShield($model = null)
@@ -97,7 +95,7 @@ class MagicSelectHelper
      */
     public static function getDefaultModel()
     {
-        return self::mergeConfiguration()['default'];
+        return self::$modelsDefaultOptions['default'];
     }
 
     public static function getDataReturnType($data)
