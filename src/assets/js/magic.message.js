@@ -14,35 +14,43 @@ class MagicMessage{
         if(objectIsSet(name)){
             this.construct();
         }else{
-            name = this.getName();
+            name = uniqueId();
             window[name] = new MagicMessage(type, title, message, okFunction, cancelFunction, name);
         }
     }
 
     construct() {
-        Modals.push(this.name);
+        let self = this;
 
-        this.setConfig();
+        Modals.push(self.name);
+
+        self.setConfig();
 
         $( "body" ).append("\
-            <div class = 'modal type-" + this.class + this.name + "' data-backdrop='static' style='display: none;'>\
+            <div class = 'modal type-" + self.class + self.name + "' data-backdrop='static' style='display: none;'>\
                 <div class='modal-dialog'>\
                     <div class='modal-content'>" +
-            this.htmlHead() +
-            this.htmlBody() +
-            this.htmlFooter() + "\
+                        self.htmlHead() +
+                        self.htmlBody() +
+                        self.htmlFooter() + "\
                    </div>\
                 </div>\
             </div>"
         ).addClass('modal-open');
 
-        $('.' + this.name).find('.content-message').html(this.message);
-        $('.' + this.name).fadeIn(300);
+        $('.' + self.name).find('.content-message').html(self.message);
 
-        setTimeout(this.addListener(), 0);
+        setTimeout(function(){
+            $('.' + self.name).fadeIn(300);
+            setTimeout(function(){
+                self.addListener();
+            }, 0)
+        }, 0);
     }
 
     setConfig() {
+        let self = this;
+
         var config = {
             confirm: {class: "warning ", color: "orange", icon: "glyphicon-question-sign ti-help-alt"},
             alert: {class: "info ", color: "#00CED1", icon: "glyphicon-info-sign ti-info-alt"},
@@ -50,16 +58,17 @@ class MagicMessage{
             default: {class: "default ", color: "#00CED1", icon: "glyphicon-comment ti-alert"}
         };
 
-        this.class = config[this.type]['class'];
-        this.color = config[this.type]['color'];
-        this.icon = config[this.type]['icon'];
+        self.class = config[self.type]['class'];
+        self.color = config[self.type]['color'];
+        self.icon = config[self.type]['icon'];
     }
 
     htmlHead(){
+        let self = this;
         return "\
-            <div class='modal-header' style='background-color: " + this.color + "; padding-top: 10px;'>\
+            <div class='modal-header' style='background-color: " + self.color + "; padding-top: 10px;'>\
                 <div style='text-align: left; padding-left: 0'>\
-                    <a class='title card-title' style='font-size: 22px; color: black'><strong>" + this.title + "</strong></a>\
+                    <a class='title card-title' style='font-size: 22px; color: black'><strong>" + self.title + "</strong></a>\
                 </div>\
             </div>\
         ";
@@ -74,21 +83,24 @@ class MagicMessage{
     }
 
     htmlFooter(){
+        let self = this;
         return "\
             <div class='modal-footer' style='background-color: whitesmoke;'>\
-                <div magic-message = '" + this.name  + "' class='pull-right float-right'>" +
-            this.okButton() + this.cancelButton() + "\
+                <div magic-message = '" + self.name  + "' class='pull-right float-right'>" +
+            this.okButton() + self.cancelButton() + "\
                 </div>\
             </div>\
         ";
     }
 
     okButton(){
-        return "<div class='btn-group'><button class = 'magic-message-run btn btn-" + (this.type == 'confirm' ? 'success' : 'warning') + "'>" + MagicsoftLanguage('Ok') + "</button></div>";
+        let self = this;
+        return "<div class='btn-group'><button class = '" + self.name + "-run btn btn-" + (self.type == 'confirm' ? 'success' : 'warning') + "'>" + MagicsoftLanguage('Ok') + "</button></div>";
     }
 
     cancelButton(){
-        return this.type == 'confirm' ? "<div class='btn-group'><a class='magic-message-close btn btn-warning' style='margin: 5px;'>" + MagicsoftLanguage('Cancel') + "</a></div>" : '';
+        let self = this;
+        return this.type == 'confirm' ? "<div class='btn-group'><button class = '" + self.name + "-close btn btn-warning' style='margin: 5px;'>" + MagicsoftLanguage('Cancel') + "</button></div>" : '';
     }
 
     runOkFunction() {
@@ -119,23 +131,21 @@ class MagicMessage{
         $(document).find('.' + this.name).fadeOut(200);
     }
 
-    getName(){
-        var name = "", textBase = "abcdefghijklmnopqrstuvwxyz123456789";
-        for( var i=0; i < 20; i++ ) name += textBase.charAt(Math.floor(Math.random() * textBase.length));
-        return 'MSM_' + name;
-    }
-
     addListener(){
         let self = this;
 
-        document.querySelector('.magic-message-run').addEventListener('click', function(event){
+        document.querySelector( '.' + self.name + '-run').addEventListener('click', function(event){
             self.runOkFunction();
+            this.blur();
             self.close();
         })
 
-        document.querySelector('.magic-message-close').addEventListener('click', function(event){
-            self.close();
-        })
+        if(this.type == 'confirm') {
+            document.querySelector('.' + self.name + '-close').addEventListener('click', function (event) {
+                this.blur();
+                self.close();
+            })
+        }
     }
 };
 

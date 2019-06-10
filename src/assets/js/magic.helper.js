@@ -86,15 +86,6 @@ toJSON = function (ajax) {
     return "{" + json + "}";
 };
 
-createId = function() {
-    var text = "";
-    var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
-
-    for( var i=0; i < 20; i++ )
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    return 'magic_' + text;
-};
-
 function isDefined( _function, _method ) { return ( typeof( window[_function] + "." + _method ) !== "undefined" ); }
 
 function isFullScreen(){
@@ -310,3 +301,7 @@ function formatCurrency(val) {
     }
 
 })(jQuery);
+
+function uniqueId(){
+    return 'MM' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
